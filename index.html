@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Optimization -->
+  <title>Background Remover Pro - 100% Offline AI Subject Isolation & PNG Maker</title>
+  <meta name="description" content="Isolate subjects and remove photo backgrounds instantly right inside your browser. 100% private with no server uploads. Powered by client-side RMBG-1.4 WebGPU AI.">
+  <meta name="keywords" content="private background remover, offline bg remover, browser ai, transparent png maker, transformers.js, webgpu image segmentation">
+  
+  <!-- Premium Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <!-- Premium Header -->
+  <header>
+    <div class="header-container">
+      <div class="logo">
+        <i class="fa-solid fa-image-portrait"></i>
+        Background Remover Pro
+        <span class="badge">client-side</span>
+      </div>
+      <div class="header-nav">
+        <div class="privacy-indicator" id="privacy-indicator" title="Your images never leave your device. Image segmentation runs entirely inside your browser's local sandbox.">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>100% Private Offline AI</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main>
+    
+    <!-- Left Column: Image Supply & Active Model Caches -->
+    <section class="control-pane">
+      
+      <!-- 1. Supply Image Source Card -->
+      <div class="glass-card">
+        <h2 class="pane-title"><i class="fa-solid fa-file-image"></i> 1. Supply Image Source</h2>
+        
+        <!-- Drag/Drop Zone -->
+        <div class="dropzone" id="dropzone">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <h3>Upload reference image</h3>
+          <p>Drag and drop or click to browse</p>
+          <p class="file-limits">Supports JPEG, PNG, WEBP, HEIC (Max 15MB)</p>
+          <input type="file" id="file-input" class="file-input" accept="image/*">
+        </div>
+
+        <!-- Image specifications -->
+        <div class="file-details" id="file-details">
+          <div class="detail-row">
+            <span>Filename:</span>
+            <span class="detail-val" id="detail-filename">photo.jpg</span>
+          </div>
+          <div class="detail-row">
+            <span>Size:</span>
+            <span class="detail-val" id="detail-size">0.0 MB</span>
+          </div>
+          <div class="detail-row">
+            <span>Dimensions:</span>
+            <span class="detail-val" id="detail-dims">0 x 0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. AI Download & Status Progress Indicator Card -->
+      <div class="glass-card progress-card" id="progress-card">
+        <div class="progress-header">
+          <span class="status-label" id="status-label"><i class="fa-solid fa-circle-notch fa-spin"></i> Downloading Model...</span>
+          <span class="status-percentage" id="status-percentage">0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="progress-details">
+          <span id="progress-speed">Initializing engine...</span>
+          <span id="progress-bytes">0 MB / 0 MB</span>
+        </div>
+      </div>
+
+      <!-- 3. Action Trigger Button Card -->
+      <div class="glass-card" style="padding: 1.25rem;">
+        <button class="transcribe-btn" id="transcribe-btn" disabled>
+          <span class="spinner" id="btn-spinner"></span>
+          <i class="fa-solid fa-wand-magic-sparkles" id="btn-icon"></i>
+          <span id="btn-text">Load AI & Isolate Background</span>
+        </button>
+      </div>
+
+      <!-- 4. Premium Sponsor Ad Demo (100% Net Profit Showcase) -->
+      <div class="ad-slot">
+        <div class="ad-badge">Sponsored</div>
+        <div class="ad-img">
+          <i class="fa-solid fa-palette"></i>
+        </div>
+        <div class="ad-content">
+          <div class="ad-title">DesignCraft Suite</div>
+          <div class="ad-desc">Create high-impact vector graphics directly from your isolated cutouts. High-fidelity layouts.</div>
+          <a href="#" class="ad-link" onclick="event.preventDefault(); alert('This is a highly tailored premium display ad demo. Because Background Remover Pro runs 100% in-browser, you have $0/month server hosting costs—meaning ad spaces like these deliver pure, high-margin profit.');">Learn More &rarr;</a>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Right Column: Visual Comparison Workstation -->
+    <section class="editor-pane">
+      <div class="glass-card editor-card">
+        
+        <!-- Editor Header Panel -->
+        <div class="editor-toolbar">
+          <div class="toolbar-group">
+            <span style="font-weight: 600; font-size: 0.95rem;">Visual Workspace</span>
+          </div>
+          <div class="toolbar-group">
+            <button class="toolbar-btn primary-btn" id="download-btn" disabled title="Download Transparent PNG cutout">
+              <i class="fa-solid fa-download"></i> Download PNG
+            </button>
+            <button class="toolbar-btn" id="clear-editor-btn" disabled title="Remove current image">
+              <i class="fa-solid fa-trash-can"></i> Remove
+            </button>
+          </div>
+        </div>
+
+        <!-- Before / After Comparative Workspace Slider Canvas -->
+        <div class="editor-body">
+          
+          <!-- Large Loading Placeholder overlay Screen -->
+          <div class="placeholder-screen" id="placeholder-screen">
+            <i class="fa-solid fa-image-portrait"></i>
+            <h3>No Active Image</h3>
+            <p>Load the RMBG segmentation model and upload a photo to begin. Your isolated cutout will appear in this workspace alongside a comparative slider handle.</p>
+          </div>
+
+          <!-- Dynamic Comparison Split slider -->
+          <div class="comparison-slider" id="comparison-slider">
+            
+            <!-- Before Layer (Standard Original Image) -->
+            <img src="" alt="Original Photo" class="slider-img" id="img-before">
+            <div class="slider-label label-before">Original</div>
+            
+            <!-- After Layer (Isolated Subject Cutout over Transparency Conic Grid) -->
+            <div class="after-wrapper transparency-grid" id="after-wrapper">
+              <img src="" alt="Background Removed" class="slider-img" id="img-after">
+              <div class="slider-label label-after">Cutout</div>
+            </div>
+            
+            <!-- Split Sliding Line Handle bar -->
+            <div class="slider-handle" id="slider-handle">
+              <div class="slider-handle-button">
+                <i class="fa-solid fa-arrows-left-right"></i>
+              </div>
+            </div>
+            
+            <!-- The Native Range Input covering workspace to capture absolute pointer positions -->
+            <input type="range" class="slider-input" id="slider-input" min="0" max="100" value="50">
+            
+          </div>
+
+        </div>
+
+        <!-- Editor Footer Metadata -->
+        <div class="editor-footer">
+          <span id="editor-status">Offline Sandbox Enabled</span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
